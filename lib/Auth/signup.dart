@@ -1,26 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tech_shop/Auth/login.dart';
-import 'package:tech_shop/WidgetStyle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tech_shop/Auth/login.dart';
+import 'package:tech_shop/widgetstyle.dart';
 
-class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+class Signup extends StatefulWidget {
+  const Signup({super.key});
 
   @override
-  State<SignUp> createState() => _SignUpState();
+  State<Signup> createState() => _SignupState();
 }
 
-bool ispasshide = true;
-TextEditingController emailController = TextEditingController();
-TextEditingController passController = TextEditingController();
-TextEditingController UsernameController = TextEditingController();
-GlobalKey<FormFieldState<String>> emailValid = GlobalKey();
-GlobalKey<FormFieldState<String>> passValid = GlobalKey();
+class _SignupState extends State<Signup> {
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
 
-class _SignUpState extends State<SignUp> {
-  bool isPassHide = true;
+  GlobalKey<FormFieldState<String>> emailValid = GlobalKey();
+  GlobalKey<FormFieldState<String>> passValid = GlobalKey();
+
+  @override
   Widget build(BuildContext context) {
+    bool isPassHide = true;
+    @override
     Size size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
@@ -33,8 +35,7 @@ class _SignUpState extends State<SignUp> {
         centerTitle: true,
         backgroundColor: WidgetStyle.primary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-        ),
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),
@@ -42,150 +43,133 @@ class _SignUpState extends State<SignUp> {
           children: [
             SizedBox(
               width: double.infinity,
-              height: size.width * 0.3,
+              height: size.height * 0.3,
               child: Image.asset('assets/images/logo.jpg'),
             ),
             SizedBox(
-              height: 20,
+              height: 10,
             ),
             TextFormField(
-              
+              controller: userNameController,
               decoration: InputDecoration(
-                  label: Text("Name"),
-                  labelStyle: TextStyle(color: WidgetStyle.primary),
-                  hintText: "Name",
-                  suffix: Icon(
-                    Icons.email,
-                    color: WidgetStyle.primary,
-                  ),
-                  focusedBorder: border(),
-                  enabledBorder: border(),
-                  errorBorder: border(),
-                  focusedErrorBorder: border()),
+                hintText: 'Username',
+                suffix: Icon(
+                  Icons.person,
+                  color: WidgetStyle.primary,
+                ),
+                focusedBorder: Border(),
+                enabledBorder: Border(),
+              ),
             ),
             SizedBox(
-              height: 20,
+              height: 10,
             ),
             TextFormField(
               controller: emailController,
-              validator: (value) => value != null && !value.contains('@')
-                  ? 'it must contains (@)'
-                  : null,
+              validator: (value) {
+                return value != null && !value.contains('@')
+                    ? 'it must contain @'
+                    : null;
+              },
               key: emailValid,
               decoration: InputDecoration(
-                  label: Text("Email Account"),
-                  labelStyle: TextStyle(color: WidgetStyle.primary),
-                  hintText: "Email Account",
-                  suffix: Icon(
-                    Icons.person,
-                    color: WidgetStyle.primary,
-                  ),
-                  focusedBorder: border(),
-                  enabledBorder: border(),
-                  errorBorder: border(),
-                  focusedErrorBorder: border()),
+                hintText: 'Email',
+                suffix: Icon(
+                  Icons.email,
+                  color: WidgetStyle.primary,
+                ),
+                focusedBorder: Border(),
+                enabledBorder: Border(),
+                errorBorder: Border(),
+                disabledBorder: Border(),
+                focusedErrorBorder: Border(),
+              ),
             ),
             SizedBox(
-              height: 20,
+              height: 10,
             ),
             TextFormField(
               controller: passController,
-              validator: (value) => value != null && value.length < 8
-                  ? 'The password must be at least 8 characters'
+              validator: (value) => value != null && value.length < 6
+                  ? 'it must be at least 6 characters long'
                   : null,
               key: passValid,
-              obscureText: isPassHide, // ✅ Update obscureText based on state
+              obscureText: isPassHide,
+              enabled: true,
               decoration: InputDecoration(
-                label: Text("Password"),
-                labelStyle: TextStyle(color: WidgetStyle.primary),
-                hintText: "Password",
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isPassHide = !isPassHide; // ✅ Toggle password visibility
-                    });
-                  },
-                  icon: Icon(
-                    isPassHide
-                        ? Icons.visibility
-                        : Icons.visibility_off, // ✅ Fix variable name
-                    color: WidgetStyle.primary,
-                  ),
-                ),
-                focusedBorder: border(),
-                enabledBorder: border(),
-                errorBorder: border(),
-                focusedErrorBorder: border(),
+                hintText: 'Password',
+                suffix: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isPassHide = !isPassHide;
+                      });
+                    },
+                    icon: Icon(
+                      // ignore: dead_code
+                      isPassHide ? Icons.visibility : Icons.visibility_off,
+                    )),
+                focusedBorder: Border(),
+                enabledBorder: Border(),
+                errorBorder: Border(),
+                disabledBorder: Border(),
+                focusedErrorBorder: Border(),
               ),
             ),
             SizedBox(
               height: 20,
             ),
-            SizedBox(
-              width: double.infinity,
-              height: 40,
-              child: ElevatedButton(
-                onPressed: () async {
-                  if (emailValid.currentState!.validate() &&
-                      passValid.currentState!.validate()) {
-                    SharedPreferences pref =
-                        await SharedPreferences.getInstance();
-                    pref.setString('Username', UsernameController.text);
-                    pref.setString('email', emailController.text);
-                    pref.setString('password', passController.text);
-                    Navigator.push(context,
-                        CupertinoPageRoute(builder: (context) => Login()));
-                  }
-                },
-                child: Text(
-                  "Create a new account",
-                  style: TextStyle(color: Colors.white, fontSize: 22),
-                ),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: WidgetStyle.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    )),
-              ),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            TextButton(
-                onPressed: () {},
-                child: Text("forgot Your Password?",
-                    style:
-                        TextStyle(color: WidgetStyle.primary, fontSize: 15))),
-            Expanded(child: SizedBox()),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Do you have your own account?"),
-                SizedBox(
-                  width: 10,
-                ),
                 InkWell(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) => Login(),
-                          ));
-                    },
-                    child: Text("Log in",
-                        style: TextStyle(
-                            color: WidgetStyle.primary, fontSize: 15))),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: WidgetStyle.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            )),
+                        onPressed: () async{
+                          if(emailValid.currentState!.validate() &&
+                            passValid.currentState!.validate()) {
+                          SharedPreferences pref =
+                              await SharedPreferences.getInstance();
+                              pref.setString('username', userNameController.text);
+                              pref.setString('email', emailController.text);
+                              pref.setString('pass', passController.text);
+                              Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login(),));
+                        }
+                        },
+                        child: Text(
+                          'Create a new account',
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ))),
               ],
-            )
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: (){
+                    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login(),));
+                  },
+                  child: Text('I have an account'
+                  ,style: TextStyle(color: WidgetStyle.primary),),
+                )
+              ],
+            ),
           ],
         ),
       ),
     ));
   }
 
-  OutlineInputBorder border() {
+  OutlineInputBorder Border() {
     return OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
-        borderSide: BorderSide(color: WidgetStyle.primary));
+      borderSide: BorderSide(color: WidgetStyle.primary, width: 2),
+      borderRadius: BorderRadius.circular(20),
+    );
   }
 }

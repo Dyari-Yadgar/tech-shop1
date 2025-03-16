@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tech_shop/Auth/login.dart';
+import 'package:tech_shop/Auth/signup.dart';
 import 'package:tech_shop/WidgetStyle.dart';
 import 'package:tech_shop/pages/checkOut.dart';
 import 'package:tech_shop/pages/checkOut.dart';
@@ -8,11 +10,6 @@ import 'pages/homepage2.dart';
 import 'pages/favorite.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
-
-// gorankariii
-
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,11 +30,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Tech Shop',
       theme: ThemeData(
-
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const BottomNavigation(),
+      home:  Profile(),
     );
   }
 }
