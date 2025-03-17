@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:tech_shop/model/buyItemModel.dart';
 import 'package:tech_shop/model/itemmodel.dart';
 
@@ -68,6 +69,14 @@ class ItemData {
     } else {
       return List.from(sharikafiltter(indexsharika));
     }
+  }
+  static List<itemModel> search(String key, String type, int indexsharika){
+    if(key.isEmpty){
+      return List.from(filtter(type, indexsharika));
+    }else{
+      return filtter(type, indexsharika).where((Element) => Element.name.toLowerCase().contains(key)).toList();
+    }
+
   }
 
   static List<buyItemModel> buyData = [];

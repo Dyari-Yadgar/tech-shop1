@@ -4,6 +4,7 @@ import 'package:tech_shop/Data/ItemData.dart';
 import 'package:tech_shop/model/itemmodel.dart';
 import 'package:tech_shop/pages/itemview.dart';
 import 'package:tech_shop/WidgetStyle.dart';
+import 'package:tech_shop/pages/itemview.dart';
 
 class HomePage2 extends StatefulWidget {
   const HomePage2({super.key});
@@ -13,6 +14,8 @@ class HomePage2 extends StatefulWidget {
 }
 
 class _HomePage2State extends State<HomePage2> {
+  var search = TextEditingController();
+
   int selecti = -1;
   List<String> typeFilter = ['All', 'Price', 'Storages'];
   int selectedIndexType = 0;
@@ -26,103 +29,98 @@ class _HomePage2State extends State<HomePage2> {
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: Column(
-            children: [
-              // Search and Filter Row
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                        context: context,
-                        builder: (context) => StatefulBuilder(
-                          builder: (context, setState1) => filter(setState1),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.menu_rounded,
-                        size: 28, color: Colors.white),
-                    style: IconButton.styleFrom(
-                      backgroundColor: WidgetStyle.primary,
+          child: Column(children: [
+            // Search and Filter Row
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    showModalBottomSheet(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(40),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search...',
-                        prefixIcon:
-                            const Icon(Icons.search, color: Colors.grey),
-                        filled: true,
-                        fillColor: const Color(0xffF1F1F1),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide.none,
-                        ),
+                      context: context,
+                      builder: (context) => StatefulBuilder(
+                        builder: (context, setState1) => filter(setState1),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 15),
-
-              // Filter Chips
-              SizedBox(
-                height: 40,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: ItemData.sharikaNames().length,
-                  itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: ChoiceChip(
-                      label: Text(ItemData.sharikaNames()[index]),
-                      selected: selecti == index,
-                      backgroundColor: Colors.white,
-                      selectedColor: WidgetStyle.primary,
-                      labelStyle: TextStyle(
-                        color: selecti == index
-                            ? Colors.white
-                            : WidgetStyle.primary,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: WidgetStyle.primary),
-                      ),
-                      onSelected: (value) {
-                        setState(() => selecti = selecti == index ? -1 : index);
-                      },
+                    );
+                  },
+                  icon: const Icon(Icons.menu_rounded,
+                      size: 28, color: Colors.white),
+                  style: IconButton.styleFrom(
+                    backgroundColor: WidgetStyle.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    controller: search,
+                    onChanged: (value) {
+                      setState(() {
+                        
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Search...',
+                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                      filled: true,
+                      fillColor: const Color(0xffF1F1F1),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 15),
 
-              // Grid Items
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            // Filter Chips
+            SizedBox(
+              height: 40,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: ItemData.sharikaNames().length,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: ChoiceChip(
+                    label: Text(ItemData.sharikaNames()[index]),
+                    selected: selecti == index,
+                    backgroundColor: Colors.white,
+                    selectedColor: WidgetStyle.primary,
+                    labelStyle: TextStyle(
+                      color:
+                          selecti == index ? Colors.white : WidgetStyle.primary,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: WidgetStyle.primary),
+                    ),
+                    onSelected: (value) {
+                      setState(() => selecti = selecti == index ? -1 : index);
+                    },
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Grid Items
+            Expanded(
+                child: GridView.count(
                     crossAxisCount: crossAxisCount,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                     childAspectRatio: 0.75,
-                  ),
-                  itemCount:
-                      ItemData.filtter(typeFilter[selectedIndexType], selecti)
-                          .length,
-                  itemBuilder: (context, index) => itemCard(
-                    ItemData.filtter(
-                        typeFilter[selectedIndexType], selecti)[index],
-                  ),
-                ),
-              ),
-            ],
-          ),
+                    children: ItemData.search(
+                            search.text, typeFilter[selectedIndexType], selecti)
+                        .map((e) => itemCard(e))
+                        .toList())),
+          ]),
         ),
       ),
     );

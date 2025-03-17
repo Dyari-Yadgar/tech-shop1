@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tech_shop/Auth/login.dart';
-import 'package:tech_shop/Auth/signup.dart';
 import 'package:tech_shop/WidgetStyle.dart';
-import 'package:tech_shop/pages/checkOut.dart';
 import 'package:tech_shop/pages/checkOut.dart';
 import 'package:tech_shop/pages/profile.dart';
-import 'package:tech_shop/WidgetStyle.dart';
+
 import 'pages/homepage2.dart';
 import 'pages/favorite.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -33,7 +30,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:  Profile(),
+      home:  BottomNavigation(),
     );
   }
 }
