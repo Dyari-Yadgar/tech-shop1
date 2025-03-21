@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tech_shop/Auth/login.dart';
 import 'package:tech_shop/widgetstyle.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -148,6 +149,18 @@ class _SignupState extends State<Signup> {
                                 await FirebaseAuth.instance.currentUser!
                                     .updateDisplayName(userNameController.text)
                                     .then((value) async {
+                                  User user =
+                                      FirebaseAuth.instance.currentUser!;
+                                  await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(user.uid)
+                                      .set({
+                                    'name': user.displayName,
+                                    'email': user.email,
+                                    'history': [],
+                                    
+                                  });
+                                }).then((value) async {
                                   await FirebaseAuth.instance.currentUser!
                                       .sendEmailVerification()
                                       .then((value) async {
