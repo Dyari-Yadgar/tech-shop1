@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,9 +20,9 @@ class _SignupState extends State<Signup> {
   GlobalKey<FormFieldState<String>> emailValid = GlobalKey();
   GlobalKey<FormFieldState<String>> passValid = GlobalKey();
 
+  bool isPassHide = true;
   @override
   Widget build(BuildContext context) {
-    bool isPassHide = true;
     @override
     Size size = MediaQuery.of(context).size;
     return SafeArea(
@@ -66,12 +67,21 @@ class _SignupState extends State<Signup> {
             ),
             TextFormField(
               controller: emailController,
-              validator: (value) {
-                return value != null && !value.contains('@')
-                    ? 'it must contain @'
-                    : null;
-              },
               key: emailValid,
+              validator: (value) {
+                // Check if value is null or doesn't contain '@'
+                if (value == null || !value.contains('@')) {
+                  return 'Email must contain @';
+                }
+
+                // Check if value ends with '.com'
+                if (!value.endsWith('.com')) {
+                  return 'Email must end with .com';
+                }
+
+                // If both checks pass, return null (valid email)
+                return null;
+              },
               decoration: InputDecoration(
                 hintText: 'Email',
                 suffix: Icon(
@@ -95,7 +105,6 @@ class _SignupState extends State<Signup> {
                   : null,
               key: passValid,
               obscureText: isPassHide,
-              enabled: true,
               decoration: InputDecoration(
                 hintText: 'Password',
                 suffix: IconButton(
@@ -105,7 +114,6 @@ class _SignupState extends State<Signup> {
                       });
                     },
                     icon: Icon(
-                      // ignore: dead_code
                       isPassHide ? Icons.visibility : Icons.visibility_off,
                     )),
                 focusedBorder: Border(),
@@ -121,23 +129,43 @@ class _SignupState extends State<Signup> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                InkWell(
+                SizedBox(
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: WidgetStyle.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             )),
-                        onPressed: () async{
-                          if(emailValid.currentState!.validate() &&
-                            passValid.currentState!.validate()) {
-                          SharedPreferences pref =
-                              await SharedPreferences.getInstance();
-                              pref.setString('username', userNameController.text);
-                              pref.setString('email', emailController.text);
-                              pref.setString('pass', passController.text);
-                              Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login(),));
-                        }
+                        onPressed: () async {
+                          if (emailValid.currentState!.validate() &&
+                              passValid.currentState!.validate()) {
+                            try {
+                              await FirebaseAuth.instance
+                                  .createUserWithEmailAndPassword(
+                                      email: emailController.text,
+                                      password: passController.text)
+                                  .then((value) async {
+                                await FirebaseAuth.instance.currentUser!
+                                    .updateDisplayName(userNameController.text)
+                                    .then((value) async {
+                                  await FirebaseAuth.instance.currentUser!
+                                      .sendEmailVerification()
+                                      .then((value) async {
+                                    await FirebaseAuth.instance.signOut();
+                                  });
+                                });
+                              });
+                            } catch (e) {
+                              // ignore: avoid_print
+                              print("Error during account creation: $e");
+                            }
+
+                            Navigator.pushReplacement(
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (context) => Login(),
+                                ));
+                          }
                         },
                         child: Text(
                           'Create a new account',
@@ -148,15 +176,29 @@ class _SignupState extends State<Signup> {
             SizedBox(
               height: 10,
             ),
+            TextButton(
+                onPressed: () {},
+                child: Text(
+                  'Forgot your password?',
+                  style: TextStyle(color: WidgetStyle.primary),
+                )),
+            Expanded(child: SizedBox()),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text('Do you have account? '),
                 InkWell(
-                  onTap: (){
-                    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login(),));
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => Login(),
+                        ));
                   },
-                  child: Text('I have an account'
-                  ,style: TextStyle(color: WidgetStyle.primary),),
+                  child: Text(
+                    'Login',
+                    style: TextStyle(color: WidgetStyle.primary),
+                  ),
                 )
               ],
             ),

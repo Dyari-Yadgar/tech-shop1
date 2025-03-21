@@ -1,9 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tech_shop/Auth/signup.dart';
 import 'package:tech_shop/main.dart';
-import 'package:tech_shop/widgetstyle.dart';
+import 'package:tech_shop/WidgetStyle.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,7 +20,7 @@ class _LoginState extends State<Login> {
 
   GlobalKey<FormFieldState<String>> emailValid = GlobalKey();
   GlobalKey<FormFieldState<String>> passValid = GlobalKey();
-
+  bool isLogin = false;
   bool isPassHide = true;
   @override
   Widget build(BuildContext context) {
@@ -52,8 +54,11 @@ class _LoginState extends State<Login> {
               TextFormField(
                 controller: emailController,
                 validator: (value) {
-                  return value != null && !value.contains('@')
-                      ? 'it must contain @'
+                  return value != null &&
+                          (!value.contains('@') ||
+                              value[0] == '@' ||
+                              value[value.length - 1] == '@')
+                      ? 'Wrong email address'
                       : null;
                 },
                 key: emailValid,
@@ -113,50 +118,62 @@ class _LoginState extends State<Login> {
                       onPressed: () async {
                         if (emailValid.currentState!.validate() &&
                             passValid.currentState!.validate()) {
-                          SharedPreferences pref = await SharedPreferences.getInstance();
-
-                          String email = pref.getString('email')?? 'error';
-                          String pass = pref.getString('pass')?? 'error';
-                          if(email != 'error' && pass != 'error') {
-
-                                if(emailController.text == email && passController.text == pass) {
-                                  pref.setBool('isLogin', true);
-                                  Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => BottomNavigation(),));
-                                }else{
-                                  showDialog(context: context, builder: (context) => AlertDialog(
-                                  content: Container(
-                                    height: 100,
-                                    child: Column(
-                                      children: [Text('Username Or Password wrong'),
-                                      Expanded(child: SizedBox()),
-                                      TextButton(onPressed: (){
-                                        Navigator.pop(context);
-                                      }, child: Text("OK"))],
-                                    ),
-                                  ),
-                                ),);
-                                }
-
-                              }else{
-                                showDialog(context: context, builder: (context) => AlertDialog(
-                                  content: Container(
-                                    height: 100,
-                                    child: Column(
-                                      children: [Text('Create an account First'),
-                                      Expanded(child: SizedBox()),
-                                      TextButton(onPressed: (){
-                                        Navigator.pop(context);
-                                      }, child: Text("OK"))],
-                                    ),
-                                  ),
-                                ),);
+                          try {
+                            setState(() {
+                              
+                            });
+                            await FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                              email: emailController.text,
+                              password: passController.text,
+                            )
+                                .then((value) {
+                              if (FirebaseAuth
+                                  .instance.currentUser!.emailVerified) {
+                                Navigator.pushReplacement(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => BottomNavigation(),
+                                    ));
+                              } else {
+                                showDialog(
+                                  // ignore: use_build_context_synchronously
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Email Not Verified"),
+                                      content: Text(
+                                          "Please check your email inbox and verify your account."),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                            });
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                            FirebaseAuth.instance
+                                                .signOut(); // Sign out after closing the dialog
+                                          },
+                                          child: Text("OK"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
                               }
-                        } else {}
+                            });
+                          } catch (e) {}
+                        }
                       },
-                      child: Text(
-                        'Login',
-                        style: TextStyle(color: Colors.white, fontSize: 15),
-                      ))),
+                      child: isLogin
+                          ? CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                          : Text(
+                              'Login',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 15),
+                            ))),
               SizedBox(
                 height: 10,
               ),

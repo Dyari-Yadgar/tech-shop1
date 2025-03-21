@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tech_shop/Auth/login.dart';
+import 'package:tech_shop/Auth/signup.dart';
 import 'package:tech_shop/WidgetStyle.dart';
 import 'package:tech_shop/pages/checkOut.dart';
 import 'package:tech_shop/pages/profile.dart';
@@ -7,6 +9,8 @@ import 'pages/homepage2.dart';
 import 'pages/favorite.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +34,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:  BottomNavigation(),
+      home: BottomNavigation(),
     );
   }
 }
