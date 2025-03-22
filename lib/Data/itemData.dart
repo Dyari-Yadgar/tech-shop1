@@ -6,25 +6,25 @@ import 'package:tech_shop/model/itemmodel.dart';
 class ItemData {
   static List<itemModel> data = [
     itemModel.fromJson({
-      'name': 'Samsoung galaxy 23 Ultra',
+      'image': 'assets/images/galaxy.jpg',
+      'name': 'Samsoung galaxy 22 Ultra',
       'price': 950,
-      'storage': '1TB',
       'sharika': 'Samsung',
-      'image': 'assets/images/galaxy.jpg'
+      'storage': '16TB',
     }),
     itemModel.fromJson({
+      'image': 'assets/images/iphone.jpg',
       'name': 'Iphone 14 pro Max',
       'price': 900,
-      'storage': '1TB',
       'sharika': 'Apple',
-      'image': 'assets/images/iphone.jpg'
+      'storage': '1TB',
     }),
     itemModel.fromJson({
+      'image': 'assets/images/redmi.jpg',
       'name': 'redmi note 10 pro',
       'price': 400,
-      'storage': '256 GB',
       'sharika': 'Xioame',
-      'image': 'assets/images/redmi.jpg'
+      'storage': '256 GB',
     }),
   ];
 
