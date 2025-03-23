@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,12 +19,9 @@ class HomePage2 extends StatefulWidget {
 class _HomePage2State extends State<HomePage2> {
   FirebaseFirestore instance = FirebaseFirestore.instance;
   DatabaseReference ref = FirebaseDatabase.instance.ref();
-<<<<<<< HEAD
   String sharika = '';
-=======
->>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
 
-  int selecti = -1;
+  int selectedIndex = -1;
   List typefiltter = ['هەمووی', 'نرخ', 'قەبارە'];
   int selectedindextype = 0;
   List<itemModel> data = [];
@@ -67,10 +63,9 @@ class _HomePage2State extends State<HomePage2> {
                 child: SizedBox(
                   height: 50,
                   child: TextField(
-<<<<<<< HEAD
                     onChanged: (value) async {
                       if (value.isNotEmpty) {
-                        if (selecti == -1) {
+                        if (selectedIndex == -1) {
                           await instance
                               .collection('items')
                               .where('name',
@@ -103,8 +98,6 @@ class _HomePage2State extends State<HomePage2> {
                         setState(() {});
                       }
                     },
-=======
->>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                     decoration: InputDecoration(
                       hintText: 'search',
                       hintTextDirection: TextDirection.rtl,
@@ -138,51 +131,40 @@ class _HomePage2State extends State<HomePage2> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();
                   } else {
-<<<<<<< HEAD
                     if (!snapshot.data!.exists) {
                       return Text('No data available');
                     }
                     List nameSharika =
                         snapshot.data!.children.map((e) => e.value).toList();
-=======
->>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
+
                     return ListView(
                       reverse: true,
                       scrollDirection: Axis.horizontal,
                       children: List.generate(
-<<<<<<< HEAD
                         nameSharika.length,
-=======
-                        ItemData.sharikaNames().length,
->>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                         (index) => Container(
                           padding: const EdgeInsets.only(right: 5),
                           child: ChoiceChip(
                             label: Text(
-<<<<<<< HEAD
                               nameSharika[index],
-=======
-                              ItemData.sharikaNames()[index],
->>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                               style: TextStyle(color: WidgetStyle.primary),
                             ),
-                            selected: selecti == index ? true : false,
+                            selected: selectedIndex == index ? true : false,
                             backgroundColor: WidgetStyle.white,
                             selectedColor: WidgetStyle.white,
                             side: BorderSide(
-                                color: selecti == index
+                                color: selectedIndex == index
                                     ? WidgetStyle.primary
                                     : WidgetStyle.white),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
-<<<<<<< HEAD
                             onSelected: (value) async {
-                              if (index == selecti) {
-                                selecti = -1;
+                              if (index == selectedIndex) {
+                                selectedIndex = -1;
                                 data.clear();
                                 setState(() {});
                               } else {
-                                selecti = index;
+                                selectedIndex = index;
                                 await instance
                                     .collection('items')
                                     .where('sharika',
@@ -196,16 +178,6 @@ class _HomePage2State extends State<HomePage2> {
                                   setState(() {});
                                 });
                               }
-=======
-                            onSelected: (value) {
-                              setState(() {
-                                if (index == selecti) {
-                                  selecti = -1;
-                                } else {
-                                  selecti = index;
-                                }
-                              });
->>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                             },
                           ),
                         ),
@@ -229,19 +201,18 @@ class _HomePage2State extends State<HomePage2> {
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Center(child: Text('No items found'));
                 }
-<<<<<<< HEAD
                 if (data.isEmpty) {
-                  data = snapshot.data!.docs
-                      .map((e) => itemModel.fromJson(e.data()))
-                      .toList();
+                  if (selectedIndex == -1) {
+                    data = snapshot.data!.docs
+                        .map((e) => itemModel.fromJson(e.data()))
+                        .toList();
+                  } else {
+                    data = snapshot.data!.docs
+                        .map((e) => itemModel.fromJson(e.data()))
+                        .toList();
+                        data = data.where((element) => element.sharika == sharika).toList();
+                  }
                 }
-=======
-
-                data = snapshot.data!.docs
-                    .map((e) => itemModel.fromJson(e.data()))
-                    .toList();
-
->>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                 return Expanded(
                   child: GridView.count(
                     crossAxisCount: 2,
@@ -409,10 +380,10 @@ class _HomePage2State extends State<HomePage2> {
                           onTap: () {
                             setState(() {
                               setState1(() {
-                                if (selecti == index) {
-                                  selecti = -1;
+                                if (selectedIndex == index) {
+                                  selectedIndex = -1;
                                 } else {
-                                  selecti = index;
+                                  selectedIndex = index;
                                 }
                               });
                             });
@@ -423,7 +394,7 @@ class _HomePage2State extends State<HomePage2> {
                                 left: index == typefiltter.length - 1 ? 0 : 10),
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             decoration: BoxDecoration(
-                                color: selecti == index
+                                color: selectedIndex == index
                                     ? Colors.grey[900]
                                     : WidgetStyle.white,
                                 border: Border.all(
@@ -434,7 +405,7 @@ class _HomePage2State extends State<HomePage2> {
                             child: Text(
                               ItemData.sharikaNames()[index],
                               style: TextStyle(
-                                  color: selecti == index
+                                  color: selectedIndex == index
                                       ? WidgetStyle.white
                                       : Colors.grey[900],
                                   fontSize: 17),

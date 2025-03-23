@@ -1,11 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tech_shop/Auth/login.dart';
 import 'package:tech_shop/widgetstyle.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -159,10 +158,6 @@ class _SignupState extends State<Signup> {
                                     'name': user.displayName,
                                     'email': user.email,
                                     'history': [],
-<<<<<<< HEAD
-=======
-
->>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                                   });
                                 }).then((value) async {
                                   await FirebaseAuth.instance.currentUser!

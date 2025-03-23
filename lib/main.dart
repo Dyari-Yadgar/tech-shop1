@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tech_shop/Auth/login.dart';
-import 'package:tech_shop/Auth/signup.dart';
+
 import 'package:tech_shop/WidgetStyle.dart';
 import 'package:tech_shop/pages/checkOut.dart';
 import 'package:tech_shop/pages/profile.dart';
@@ -9,10 +8,6 @@ import 'pages/homepage2.dart';
 import 'pages/favorite.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,7 +60,25 @@ class _BottomNavigationState extends State<BottomNavigation> {
         ),
         backgroundColor: WidgetStyle.primary,
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(20))),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        ),
+        actions: [
+          SizedBox(
+            width: 40,
+          ),
+          Builder(
+            builder: (context) => IconButton(
+              iconSize: 35,
+              icon: Icon(Icons.menu, color: Colors.white),
+              onPressed: () {
+                Scaffold.of(context).openEndDrawer();
+              },
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+        ],
       ),
       endDrawer: Drawer(
         backgroundColor: Colors.white,
@@ -80,13 +93,9 @@ class _BottomNavigationState extends State<BottomNavigation> {
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_cart_outlined), label: 'Cards'),
         ],
-
-        //bo rangkrdne aw pageay ka lasaret
         selectedItemColor: WidgetStyle.primary,
-        // unselectedItemColor: Colors.amber,
         unselectedItemColor: WidgetStyle.primary.withOpacity(0.2),
         currentIndex: BottomNavigation.pageindex,
-
         onTap: (value) {
           setState(() {
             BottomNavigation.pageindex = value;
