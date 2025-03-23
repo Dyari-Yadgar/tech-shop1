@@ -35,6 +35,9 @@ dependencies:
   firebase_auth: ^5.5.1    # Update to match the latest compatible version
   firebase_ui_auth: ^1.16.1
   shared_preferences: ^2.5.2
+  cloud_firestore: ^5.6.5
+  google_sign_in: ^6.3.0
+  firebase_database: ^11.3.4
   
 dev_dependencies:
   flutter_lints: ^5.0.0

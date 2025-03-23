@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:tech_shop/Auth/login.dart';
+import 'package:tech_shop/Auth/signup.dart';
 import 'package:tech_shop/WidgetStyle.dart';
-import 'package:tech_shop/pages/checkOut.dart';
 import 'package:tech_shop/pages/checkOut.dart';
 import 'package:tech_shop/pages/profile.dart';
-import 'package:tech_shop/WidgetStyle.dart';
+
 import 'pages/homepage2.dart';
 import 'pages/favorite.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
-
-// gorankariii
-
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  var a = await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
@@ -26,18 +26,16 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Tech Shop',
       theme: ThemeData(
-
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const BottomNavigation(),
+      home: BottomNavigation(),
     );
   }
 }
