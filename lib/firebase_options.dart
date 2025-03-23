@@ -41,8 +41,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
+<<<<<<< HEAD
     databaseURL:
         'https://tech-shop-3c42a-default-rtdb.asia-southeast1.firebasedatabase.app/',
+=======
+    databaseURL: 'https://tech-shop-3c42a-default-rtdb.asia-southeast1.firebasedatabase.app/',
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
     apiKey: 'AIzaSyA6NpYyfa652E57gRU_db7BAncfNq2yz7E',
     appId: '1:705213262722:web:07e475a24c3f84f99c7d9b',
     messagingSenderId: '705213262722',
@@ -53,8 +57,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
+<<<<<<< HEAD
     databaseURL:
         'https://tech-shop-3c42a-default-rtdb.asia-southeast1.firebasedatabase.app/',
+=======
+        databaseURL: 'https://tech-shop-3c42a-default-rtdb.asia-southeast1.firebasedatabase.app/',
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
     apiKey: 'AIzaSyBEUfC65D7uZIk6zLtvMjFPVcaSSDNol2U',
     appId: '1:705213262722:android:46147b443424ba0d9c7d9b',
     messagingSenderId: '705213262722',
@@ -63,8 +71,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
+<<<<<<< HEAD
     databaseURL:
         'https://tech-shop-3c42a-default-rtdb.asia-southeast1.firebasedatabase.app/',
+=======
+        databaseURL: 'https://tech-shop-3c42a-default-rtdb.asia-southeast1.firebasedatabase.app/',
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
     apiKey: 'AIzaSyA4BBkVSb6LQuN41mxwQMy1u1BO3Lbusog',
     appId: '1:705213262722:ios:43d0625be55d8bd19c7d9b',
     messagingSenderId: '705213262722',
@@ -74,8 +86,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
+<<<<<<< HEAD
     databaseURL:
         'https://tech-shop-3c42a-default-rtdb.asia-southeast1.firebasedatabase.app/',
+=======
+    databaseURL: 'https://tech-shop-3c42a-default-rtdb.asia-southeast1.firebasedatabase.app/',
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
     apiKey: 'AIzaSyA4BBkVSb6LQuN41mxwQMy1u1BO3Lbusog',
     appId: '1:705213262722:ios:43d0625be55d8bd19c7d9b',
     messagingSenderId: '705213262722',
@@ -85,8 +101,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
+<<<<<<< HEAD
     databaseURL:
         'https://tech-shop-3c42a-default-rtdb.asia-southeast1.firebasedatabase.app/',
+=======
+    databaseURL: 'https://tech-shop-3c42a-default-rtdb.asia-southeast1.firebasedatabase.app/',
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
     apiKey: 'AIzaSyA6NpYyfa652E57gRU_db7BAncfNq2yz7E',
     appId: '1:705213262722:web:b2c01994a2a60a2a9c7d9b',
     messagingSenderId: '705213262722',

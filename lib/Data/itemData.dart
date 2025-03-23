@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:tech_shop/model/buyItemModel.dart';
 import 'package:tech_shop/model/itemmodel.dart';
 
@@ -5,25 +6,25 @@ import 'package:tech_shop/model/itemmodel.dart';
 class ItemData {
   static List<itemModel> data = [
     itemModel.fromJson({
-      'name': 'Samsoung galaxy 23 Ultra',
+      'image': 'assets/images/galaxy.jpg',
+      'name': 'Samsoung galaxy 22 Ultra',
       'price': 950,
-      'storage': '1TB',
       'sharika': 'Samsung',
-      'image': 'assets/images/galaxy.jpg'
+      'storage': '16TB',
     }),
     itemModel.fromJson({
+      'image': 'assets/images/iphone.jpg',
       'name': 'Iphone 14 pro Max',
       'price': 900,
-      'storage': '1TB',
       'sharika': 'Apple',
-      'image': 'assets/images/iphone.jpg'
+      'storage': '1TB',
     }),
     itemModel.fromJson({
+      'image': 'assets/images/redmi.jpg',
       'name': 'redmi note 10 pro',
       'price': 400,
-      'storage': '256 GB',
       'sharika': 'Xioame',
-      'image': 'assets/images/redmi.jpg'
+      'storage': '256 GB',
     }),
   ];
 
@@ -68,6 +69,14 @@ class ItemData {
     } else {
       return List.from(sharikafiltter(indexsharika));
     }
+  }
+  static List<itemModel> search(String key, String type, int indexsharika){
+    if(key.isEmpty){
+      return List.from(filtter(type, indexsharika));
+    }else{
+      return filtter(type, indexsharika).where((Element) => Element.name.toLowerCase().contains(key)).toList();
+    }
+
   }
 
   static List<buyItemModel> buyData = [];

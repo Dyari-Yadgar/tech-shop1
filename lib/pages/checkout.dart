@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tech_shop/Auth/login.dart';
 import 'package:tech_shop/Data/ItemData.dart';
 import 'package:tech_shop/pages/widgets/itemCardWidget.dart';
@@ -13,6 +14,21 @@ class checkOut extends StatefulWidget {
 }
 
 class _checkOutState extends State<checkOut> {
+  bool isLogin = false;
+
+  getData() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    isLogin = pref.getBool('isLogin') ?? false;
+    setState(() {});
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -137,19 +153,40 @@ class _checkOutState extends State<checkOut> {
                               ]),
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
+                              if (isLogin) {
+                                // Show success dialog
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text('Purchase Successful'),
+                                    content:
+                                        Text('Your purchase was successful!'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                // Navigate to the Login page
+                                Navigator.push(
                                   context,
                                   CupertinoPageRoute(
-                                      builder: (context) => Login()));
+                                      builder: (context) => Login()),
+                                );
+                              }
                             },
                             style: ElevatedButton.styleFrom(
-                                // yane be background
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12))),
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
                             child: const Text(
-                              'کڕین',
+                              'Buy',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 20),
                             ),

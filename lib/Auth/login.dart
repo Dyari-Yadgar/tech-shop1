@@ -117,7 +117,13 @@ class _LoginState extends State<Login> {
                         if (emailValid.currentState!.validate() &&
                             passValid.currentState!.validate()) {
                           try {
+<<<<<<< HEAD
                             setState(() {});
+=======
+                            setState(() {
+                              
+                            });
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                             await FirebaseAuth.instance
                                 .signInWithEmailAndPassword(
                               email: emailController.text,
@@ -143,7 +149,12 @@ class _LoginState extends State<Login> {
                                       actions: [
                                         TextButton(
                                           onPressed: () {
+<<<<<<< HEAD
                                             setState(() {});
+=======
+                                            setState(() {
+                                            });
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                                             Navigator.of(context)
                                                 .pop(); // Close the dialog
                                             FirebaseAuth.instance

@@ -20,7 +20,10 @@ class HomePage2 extends StatefulWidget {
 class _HomePage2State extends State<HomePage2> {
   FirebaseFirestore instance = FirebaseFirestore.instance;
   DatabaseReference ref = FirebaseDatabase.instance.ref();
+<<<<<<< HEAD
   String sharika = '';
+=======
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
 
   int selecti = -1;
   List typefiltter = ['هەمووی', 'نرخ', 'قەبارە'];
@@ -64,6 +67,7 @@ class _HomePage2State extends State<HomePage2> {
                 child: SizedBox(
                   height: 50,
                   child: TextField(
+<<<<<<< HEAD
                     onChanged: (value) async {
                       if (value.isNotEmpty) {
                         if (selecti == -1) {
@@ -99,6 +103,8 @@ class _HomePage2State extends State<HomePage2> {
                         setState(() {});
                       }
                     },
+=======
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                     decoration: InputDecoration(
                       hintText: 'search',
                       hintTextDirection: TextDirection.rtl,
@@ -132,21 +138,32 @@ class _HomePage2State extends State<HomePage2> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();
                   } else {
+<<<<<<< HEAD
                     if (!snapshot.data!.exists) {
                       return Text('No data available');
                     }
                     List nameSharika =
                         snapshot.data!.children.map((e) => e.value).toList();
+=======
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                     return ListView(
                       reverse: true,
                       scrollDirection: Axis.horizontal,
                       children: List.generate(
+<<<<<<< HEAD
                         nameSharika.length,
+=======
+                        ItemData.sharikaNames().length,
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                         (index) => Container(
                           padding: const EdgeInsets.only(right: 5),
                           child: ChoiceChip(
                             label: Text(
+<<<<<<< HEAD
                               nameSharika[index],
+=======
+                              ItemData.sharikaNames()[index],
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                               style: TextStyle(color: WidgetStyle.primary),
                             ),
                             selected: selecti == index ? true : false,
@@ -158,6 +175,7 @@ class _HomePage2State extends State<HomePage2> {
                                     : WidgetStyle.white),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
+<<<<<<< HEAD
                             onSelected: (value) async {
                               if (index == selecti) {
                                 selecti = -1;
@@ -178,6 +196,16 @@ class _HomePage2State extends State<HomePage2> {
                                   setState(() {});
                                 });
                               }
+=======
+                            onSelected: (value) {
+                              setState(() {
+                                if (index == selecti) {
+                                  selecti = -1;
+                                } else {
+                                  selecti = index;
+                                }
+                              });
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                             },
                           ),
                         ),
@@ -201,11 +229,19 @@ class _HomePage2State extends State<HomePage2> {
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Center(child: Text('No items found'));
                 }
+<<<<<<< HEAD
                 if (data.isEmpty) {
                   data = snapshot.data!.docs
                       .map((e) => itemModel.fromJson(e.data()))
                       .toList();
                 }
+=======
+
+                data = snapshot.data!.docs
+                    .map((e) => itemModel.fromJson(e.data()))
+                    .toList();
+
+>>>>>>> a719f0d52fcc60ef929a2ff04686fba58badcacd
                 return Expanded(
                   child: GridView.count(
                     crossAxisCount: 2,
