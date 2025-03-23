@@ -22,9 +22,10 @@ class _HomePage2State extends State<HomePage2> {
   String sharika = '';
 
   int selectedIndex = -1;
-  List typefiltter = ['هەمووی', 'نرخ', 'قەبارە'];
-  int selectedindextype = 0;
+  List typeFilter = ['All', 'price', 'Storage'];
+  int selectedIndexType = 0;
   List<itemModel> data = [];
+  List nameSharika = [];
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,8 @@ class _HomePage2State extends State<HomePage2> {
                             borderRadius: BorderRadius.circular(40)),
                         context: context,
                         builder: (context) => StatefulBuilder(
-                            builder: (context, setState1) => filter(setState1)),
+                            builder: (context, reloadWidgets) =>
+                                filter(reloadWidgets, nameSharika)),
                       );
                     },
                     icon: const Icon(
@@ -134,7 +136,7 @@ class _HomePage2State extends State<HomePage2> {
                     if (!snapshot.data!.exists) {
                       return Text('No data available');
                     }
-                    List nameSharika =
+                    nameSharika =
                         snapshot.data!.children.map((e) => e.value).toList();
 
                     return ListView(
@@ -161,22 +163,12 @@ class _HomePage2State extends State<HomePage2> {
                             onSelected: (value) async {
                               if (index == selectedIndex) {
                                 selectedIndex = -1;
-                                data.clear();
                                 setState(() {});
                               } else {
                                 selectedIndex = index;
-                                await instance
-                                    .collection('items')
-                                    .where('sharika',
-                                        isEqualTo: nameSharika[index])
-                                    .get()
-                                    .then((value) {
-                                  data = value.docs
-                                      .map((e) => itemModel.fromJson(e.data()))
-                                      .toList();
-                                  sharika = nameSharika[index];
-                                  setState(() {});
-                                });
+
+                                sharika = nameSharika[index];
+                                setState(() {});
                               }
                             },
                           ),
@@ -194,25 +186,14 @@ class _HomePage2State extends State<HomePage2> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (snapshot.hasError) {
-                  return Center(child: Text("Error: ${snapshot.error}"));
-                }
-
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Center(child: Text('No items found'));
                 }
-                if (data.isEmpty) {
-                  if (selectedIndex == -1) {
-                    data = snapshot.data!.docs
-                        .map((e) => itemModel.fromJson(e.data()))
-                        .toList();
-                  } else {
-                    data = snapshot.data!.docs
-                        .map((e) => itemModel.fromJson(e.data()))
-                        .toList();
-                        data = data.where((element) => element.sharika == sharika).toList();
-                  }
-                }
+
+                data = snapshot.data!.docs
+                    .map((e) => itemModel.fromJson(e.data()))
+                    .toList();
+
                 return Expanded(
                   child: GridView.count(
                     crossAxisCount: 2,
@@ -229,12 +210,21 @@ class _HomePage2State extends State<HomePage2> {
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> getData() async {
-    try {
-      return await FirebaseFirestore.instance.collection('items').get();
-    } catch (e) {
-      print("Error fetching data: $e");
-      rethrow;
+    if (selectedIndex == -1 && selectedIndex == 0) {
+      return instance.collection('items').get();
+    } else if (selectedIndex != -1 && selectedIndex == 0) {
+      return instance
+          .collection('items')
+          .where('sharika', isEqualTo: sharika)
+          .get();
+    } else if (selectedIndex != -1 && selectedIndex != 0) {
+      return instance
+          .collection('items').orderBy(typeFilter[selectedIndexType] == 'price' ? 'price' : 'Storage')
+          .where('sharika', isEqualTo: sharika)
+          .get();
     }
+
+    return instance.collection('items').get();
   }
 
   Widget itemCard(itemModel item) {
@@ -282,17 +272,17 @@ class _HomePage2State extends State<HomePage2> {
               ),
             ),
           ),
-          Text('${item.price}\$: نرخ '),
+          Text('${item.price}\$: price '),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text(item.storage), const Text(' : قەبارە')],
+            children: [Text(item.storage), const Text(' : Storage')],
           )
         ],
       ),
     );
   }
 
-  Widget filter(setState1) {
+  Widget filter(reloadWidgets, List nameSharika) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       decoration: BoxDecoration(
@@ -313,18 +303,18 @@ class _HomePage2State extends State<HomePage2> {
               TextButton(
                   onPressed: () {},
                   child: const Text(
-                    'گەرانەوە',
+                    'Back',
                     style: TextStyle(color: Colors.black),
                   )),
               const Expanded(child: SizedBox()),
               const Text(
-                'فلتەر',
+                'Filtering',
                 style: TextStyle(fontSize: 25),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          const Text('ڕیزکردن بە پێی '),
+          const Text('Filter by'),
           const SizedBox(height: 10),
           SizedBox(
             height: 40,
@@ -332,22 +322,22 @@ class _HomePage2State extends State<HomePage2> {
                 reverse: true,
                 scrollDirection: Axis.horizontal,
                 children: List.generate(
-                    typefiltter.length,
+                    typeFilter.length,
                     (index) => InkWell(
                           onTap: () {
                             setState(() {
-                              setState1(() {
-                                selectedindextype = index;
+                              reloadWidgets(() {
+                                selectedIndexType = index;
                               });
                             });
                           },
                           child: Container(
                             alignment: Alignment.center,
                             margin: EdgeInsets.only(
-                                left: index == typefiltter.length - 1 ? 0 : 10),
+                                left: index == typeFilter.length - 1 ? 0 : 10),
                             width: 100,
                             decoration: BoxDecoration(
-                                color: selectedindextype == index
+                                color: selectedIndexType == index
                                     ? Colors.grey[900]
                                     : WidgetStyle.white,
                                 border: Border.all(
@@ -356,9 +346,9 @@ class _HomePage2State extends State<HomePage2> {
                                         const Color.fromARGB(255, 23, 22, 22)),
                                 borderRadius: BorderRadius.circular(12)),
                             child: Text(
-                              '${typefiltter[index]}',
+                              '${typeFilter[index]}',
                               style: TextStyle(
-                                  color: selectedindextype == index
+                                  color: selectedIndexType == index
                                       ? WidgetStyle.white
                                       : Colors.grey[900],
                                   fontSize: 17),
@@ -367,7 +357,7 @@ class _HomePage2State extends State<HomePage2> {
                         ))),
           ),
           const SizedBox(height: 20),
-          const Text('شەریکە'),
+          const Text('Brand'),
           const SizedBox(height: 10),
           SizedBox(
             height: 40,
@@ -375,24 +365,29 @@ class _HomePage2State extends State<HomePage2> {
                 reverse: true,
                 scrollDirection: Axis.horizontal,
                 children: List.generate(
-                    ItemData.sharikaNames().length,
+                    nameSharika.length,
                     (index) => InkWell(
-                          onTap: () {
-                            setState(() {
-                              setState1(() {
-                                if (selectedIndex == index) {
-                                  selectedIndex = -1;
-                                } else {
-                                  selectedIndex = index;
-                                }
+                          onTap: () async {
+                            if (index == selectedIndex) {
+                              selectedIndex = -1;
+
+                              setState(() {
+                                reloadWidgets(() {});
                               });
-                            });
+                            } else {
+                              selectedIndex = index;
+
+                              sharika = nameSharika[index];
+                              setState(() {
+                                reloadWidgets(() {});
+                              });
+                            }
                           },
                           child: Container(
                             alignment: Alignment.center,
                             margin: EdgeInsets.only(
-                                left: index == typefiltter.length - 1 ? 0 : 10),
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                                left: index == typeFilter.length - 1 ? 0 : 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             decoration: BoxDecoration(
                                 color: selectedIndex == index
                                     ? Colors.grey[900]
@@ -403,7 +398,7 @@ class _HomePage2State extends State<HomePage2> {
                                         const Color.fromARGB(255, 23, 22, 22)),
                                 borderRadius: BorderRadius.circular(12)),
                             child: Text(
-                              ItemData.sharikaNames()[index],
+                              nameSharika[index],
                               style: TextStyle(
                                   color: selectedIndex == index
                                       ? WidgetStyle.white

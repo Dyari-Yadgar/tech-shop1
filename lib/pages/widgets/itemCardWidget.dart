@@ -41,7 +41,7 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
                   IconButton(onPressed: () {}, icon: const Icon(Icons.close))
                 ]),
                 Text(widget.item.name),
-                Text('Price : \$${widget.item.price * widget.item.numberOfItem}'),
+                Text('price : \$${widget.item.price * widget.item.numberOfItem}'),
                 Container(
                   height: 35,
                   width: 140,

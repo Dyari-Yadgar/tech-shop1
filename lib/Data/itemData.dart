@@ -58,7 +58,7 @@ class ItemData {
   }
 
   static List<itemModel> filtter(String type, int indexsharika) {
-    if (type == 'Price') {
+    if (type == 'price') {
       List<itemModel> sorted = List.from(sharikafiltter(indexsharika));
       sorted.sort(
         (a, b) => a.price.compareTo(b.price),
