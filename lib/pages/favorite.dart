@@ -88,7 +88,7 @@ class _favoriteState extends State<favorite> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text('${item.price}\$'),
-                    Text(item.storage),
+                    Text(item.storage.toString()),
                   ],
                 ),
               ),

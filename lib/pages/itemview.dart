@@ -46,7 +46,7 @@ class _ItemViewState extends State<ItemView> {
               borderRadius:
                   const BorderRadius.vertical(bottom: Radius.circular(0)),
               image: DecorationImage(
-                  image: AssetImage(widget.item.image), fit: BoxFit.cover)),
+                  image: NetworkImage(widget.item.image), fit: BoxFit.cover)),
           child: Container(
               // ta jwt nabe ba shashakawa
               margin: const EdgeInsets.only(left: 10, top: 10),

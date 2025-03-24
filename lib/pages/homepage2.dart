@@ -19,10 +19,13 @@ class HomePage2 extends StatefulWidget {
 class _HomePage2State extends State<HomePage2> {
   FirebaseFirestore instance = FirebaseFirestore.instance;
   DatabaseReference ref = FirebaseDatabase.instance.ref();
+  TextEditingController search = TextEditingController();
   String sharika = '';
+  String searchKey = '';
+   String upperCaseValue = '';
 
   int selectedIndex = -1;
-  List typeFilter = ['All', 'price', 'Storage'];
+  List typeFilter = ['هەمووی', 'نرخ', 'قەبارە'];
   int selectedIndexType = 0;
   List<itemModel> data = [];
   List nameSharika = [];
@@ -50,8 +53,8 @@ class _HomePage2State extends State<HomePage2> {
                             borderRadius: BorderRadius.circular(40)),
                         context: context,
                         builder: (context) => StatefulBuilder(
-                            builder: (context, reloadWidgets) =>
-                                filter(reloadWidgets, nameSharika)),
+                            builder: (context, reloadWidget) =>
+                                filter(reloadWidget, nameSharika)),
                       );
                     },
                     icon: const Icon(
@@ -65,38 +68,19 @@ class _HomePage2State extends State<HomePage2> {
                 child: SizedBox(
                   height: 50,
                   child: TextField(
+                    controller: search,
                     onChanged: (value) async {
-                      if (value.isNotEmpty) {
-                        if (selectedIndex == -1) {
-                          await instance
-                              .collection('items')
-                              .where('name',
-                                  isGreaterThanOrEqualTo: value,
-                                  isLessThan: value + 'z')
-                              .get()
-                              .then((value) {
-                            data = value.docs
-                                .map((e) => itemModel.fromJson(e.data()))
-                                .toList();
-                            setState(() {});
-                          });
-                        } else {
-                          await instance
-                              .collection('items')
-                              .where('name',
-                                  isGreaterThanOrEqualTo: value,
-                                  isLessThan: value + 'z')
-                              .where('sharika', isEqualTo: sharika)
-                              .get()
-                              .then((value) {
-                            data = value.docs
-                                .map((e) => itemModel.fromJson(e.data()))
-                                .toList();
-                            setState(() {});
-                          });
-                        }
+                      upperCaseValue = value.toUpperCase();
+                      search.value = search.value.copyWith(
+                        text: upperCaseValue,
+                        selection: TextSelection.collapsed(
+                            offset: upperCaseValue.length),
+                      );
+                      if (upperCaseValue.isNotEmpty) {
+                        searchKey = upperCaseValue;
+                        setState(() {});
                       } else {
-                        data.clear();
+                        searchKey = '';
                         setState(() {});
                       }
                     },
@@ -186,10 +170,6 @@ class _HomePage2State extends State<HomePage2> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text('No items found'));
-                }
-
                 data = snapshot.data!.docs
                     .map((e) => itemModel.fromJson(e.data()))
                     .toList();
@@ -210,19 +190,51 @@ class _HomePage2State extends State<HomePage2> {
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> getData() async {
-    if (selectedIndex == -1 && selectedIndex == 0) {
+    if (selectedIndex == -1 && selectedIndexType == 0 && searchKey == '') {
+      //default
       return instance.collection('items').get();
-    } else if (selectedIndex != -1 && selectedIndex == 0) {
+    } else if (selectedIndex != -1 &&
+        selectedIndexType == 0 &&
+        searchKey == '') {
+      // bo sharika
       return instance
           .collection('items')
           .where('sharika', isEqualTo: sharika)
           .get();
-    } else if (selectedIndex != -1 && selectedIndex != 0) {
+    } else if (selectedIndex != -1 &&
+        selectedIndexType != 0 &&
+        searchKey == '') {
       return instance
-          .collection('items').orderBy(typeFilter[selectedIndexType] == 'price' ? 'price' : 'Storage')
+          .collection('items')
+          .orderBy(typeFilter[selectedIndexType] == 'نرخ' ? 'price' : 'storage')
           .where('sharika', isEqualTo: sharika)
           .get();
+    } else if (selectedIndex == -1 &&
+        selectedIndexType != 0 &&
+        searchKey == '') {
+      return instance
+          .collection('items')
+          .orderBy(typeFilter[selectedIndexType] == 'نرخ' ? 'price' : 'storage')
+          .get();
     }
+    // agar bas search bw
+    else if (searchKey != '' && selectedIndex == -1 && selectedIndexType == 0) {
+      return instance
+          .collection('items')
+          .where('name',
+              isGreaterThanOrEqualTo: searchKey, isLessThan: searchKey + 'z')
+          .get();
+    }
+    // aga search w sharika bwn
+    else if (searchKey != '' && selectedIndex != -1 && selectedIndexType == 0) {
+      return instance
+          .collection('items')
+          .where('sharika', isEqualTo: sharika)
+          .where('name',
+              isGreaterThanOrEqualTo: searchKey, isLessThan: searchKey + 'z')
+          .get();
+    }
+    //agar search w rizkrdn bw
 
     return instance.collection('items').get();
   }
@@ -247,7 +259,7 @@ class _HomePage2State extends State<HomePage2> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
                     image: DecorationImage(
-                        image: AssetImage(item.image), fit: BoxFit.cover)),
+                        image: NetworkImage(item.image), fit: BoxFit.cover)),
                 child: ClipRRect(
                   borderRadius:
                       const BorderRadius.vertical(bottom: Radius.circular(25)),
@@ -272,17 +284,17 @@ class _HomePage2State extends State<HomePage2> {
               ),
             ),
           ),
-          Text('${item.price}\$: price '),
+          Text('${item.price}\$: نرخ '),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text(item.storage), const Text(' : Storage')],
+            children: [Text(item.storage.toString()), const Text(' : قەبارە')],
           )
         ],
       ),
     );
   }
 
-  Widget filter(reloadWidgets, List nameSharika) {
+  Widget filter(reloadWidget, List nameSharika) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       decoration: BoxDecoration(
@@ -303,18 +315,18 @@ class _HomePage2State extends State<HomePage2> {
               TextButton(
                   onPressed: () {},
                   child: const Text(
-                    'Back',
+                    'گەرانەوە',
                     style: TextStyle(color: Colors.black),
                   )),
               const Expanded(child: SizedBox()),
               const Text(
-                'Filtering',
+                'فلتەر',
                 style: TextStyle(fontSize: 25),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          const Text('Filter by'),
+          const Text('ڕیزکردن بە پێی '),
           const SizedBox(height: 10),
           SizedBox(
             height: 40,
@@ -326,7 +338,7 @@ class _HomePage2State extends State<HomePage2> {
                     (index) => InkWell(
                           onTap: () {
                             setState(() {
-                              reloadWidgets(() {
+                              reloadWidget(() {
                                 selectedIndexType = index;
                               });
                             });
@@ -357,7 +369,7 @@ class _HomePage2State extends State<HomePage2> {
                         ))),
           ),
           const SizedBox(height: 20),
-          const Text('Brand'),
+          const Text('شەریکە'),
           const SizedBox(height: 10),
           SizedBox(
             height: 40,
@@ -370,16 +382,15 @@ class _HomePage2State extends State<HomePage2> {
                           onTap: () async {
                             if (index == selectedIndex) {
                               selectedIndex = -1;
-
                               setState(() {
-                                reloadWidgets(() {});
+                                reloadWidget(() {});
                               });
                             } else {
                               selectedIndex = index;
 
                               sharika = nameSharika[index];
                               setState(() {
-                                reloadWidgets(() {});
+                                reloadWidget(() {});
                               });
                             }
                           },
@@ -387,7 +398,7 @@ class _HomePage2State extends State<HomePage2> {
                             alignment: Alignment.center,
                             margin: EdgeInsets.only(
                                 left: index == typeFilter.length - 1 ? 0 : 10),
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
                             decoration: BoxDecoration(
                                 color: selectedIndex == index
                                     ? Colors.grey[900]
